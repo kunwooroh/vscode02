@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GitHub 트렌딩 10월 3주</title>
+<style>
+  :root {
+    --bg: #f6f5f1; --paper: #ffffff; --ink: #1d1d1b; --muted: #6b6a65;
+    --line: #e4e2db; --accent: #2f5d50; --accent-soft: #e6efeb;
+    --warn: #9a5b13; --warn-soft: #fbf1e3; --code-bg: #f3f2ed; --ok: #2f7d4f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #151514; --paper: #1e1e1c; --ink: #ecebe6; --muted: #a09e97;
+      --line: #33322f; --accent: #8cc4ae; --accent-soft: #24302b;
+      --warn: #e6b273; --warn-soft: #2e261c; --code-bg: #262624; --ok: #7fd1a0;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #151514; --paper: #1e1e1c; --ink: #ecebe6; --muted: #a09e97;
+    --line: #33322f; --accent: #8cc4ae; --accent-soft: #24302b;
+    --warn: #e6b273; --warn-soft: #2e261c; --code-bg: #262624; --ok: #7fd1a0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 13px/1.5 "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  }
+  .page {
+    max-width: 1100px; margin: 24px auto; padding: 24px 28px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 10px;
+  }
+  header { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start;
+    border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 12px; }
+  .kicker { font-size: 12px; color: var(--muted); }
+  h1 { margin: 2px 0 4px; font-size: 21px; line-height: 1.3; }
+  .lede { margin: 0; color: var(--muted); }
+  .stats { display: flex; gap: 18px; flex-shrink: 0; text-align: right; }
+  .stat b { display: block; font-size: 19px; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .stat span { font-size: 11px; color: var(--muted); }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .sec { grid-column: 1 / -1; font-size: 12px; font-weight: 700; color: var(--muted);
+    letter-spacing: .04em; margin: 6px 0 -2px; display: flex; justify-content: space-between; align-items: center; }
+  .card { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; }
+  .card.top { border-color: var(--accent); grid-column: 1 / -1; background: var(--accent-soft); }
+  .card.top .copybox { background: var(--paper); }
+  .card-head { display: flex; align-items: baseline; gap: 6px; }
+  .rank { font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; min-width: 22px; }
+  .card h2 { font-size: 14px; margin: 0; }
+  .star { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .time { margin-left: auto; font-size: 11px; color: var(--muted); text-decoration: none; white-space: nowrap; }
+  .time:hover { color: var(--accent); }
+  .what { margin: 3px 0 4px; }
+  .warn { margin: 0 0 6px; font-size: 12px; color: var(--warn); }
+  .repo { display: none; margin: auto 0 0; font: 8.6px/1.3 ui-monospace, "SF Mono", Consolas, monospace; color: var(--muted); }
+  .copybox { margin-top: auto; display: flex; align-items: stretch; background: var(--code-bg);
+    border-radius: 6px; overflow: hidden; }
+  .copybox code { flex: 1; padding: 5px 8px; font: 11.5px/1.45 ui-monospace, "SF Mono", Consolas, monospace;
+    white-space: pre-wrap; word-break: break-all; }
+  .btn { border: 0; border-left: 1px solid var(--line); background: transparent; color: var(--accent);
+    font: 600 12px/1 inherit; padding: 0 10px; cursor: pointer; white-space: nowrap; min-width: 52px; }
+  .btn:hover { background: var(--accent-soft); }
+  .btn.done { color: var(--ok); }
+  .btn-line { border: 1px solid var(--accent); border-radius: 6px; padding: 5px 10px; min-width: auto; font-size: 11px; }
+
+  .check { grid-column: 1 / -1; background: var(--warn-soft); border-radius: 8px; padding: 10px 12px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
+  .check h3 { grid-column: 1 / -1; margin: 0; font-size: 14px; color: var(--warn);
+    display: flex; justify-content: space-between; align-items: center; }
+  .check .row { display: flex; flex-direction: column; gap: 3px; }
+  .check .row span { font-size: 12px; }
+  .check .copybox { background: var(--paper); margin-top: 0; }
+
+  footer { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; gap: 12px; font-size: 11px; color: var(--muted); }
+  footer a { color: inherit; }
+
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 620px) {
+    .page { margin: 0; padding: 18px 16px; border-radius: 0; border: 0; }
+    header { flex-direction: column; }
+    .stats { text-align: left; }
+    .grid, .check { grid-template-columns: 1fr; }
+    footer { flex-direction: column; }
+  }
+  @media print {
+    @page { size: A4; margin: 7mm; }
+    body { background: #fff; font-size: 9.3px; line-height: 1.38; }
+    .page { margin: 0; padding: 0; border: 0; max-width: none; }
+    h1 { font-size: 16px; } .stat b { font-size: 14px; }
+    .card h2 { font-size: 11px; }
+    .copybox code { font-size: 8.6px; padding: 3px 6px; }
+    .btn { display: none; }
+    .card .copybox { display: none; }
+    .card .repo { display: block; }
+    .card { break-inside: avoid; padding: 5px 7px; }
+    .grid { gap: 5px; grid-template-columns: repeat(3, 1fr); }
+    .check { padding: 6px 8px; gap: 3px 12px; grid-template-columns: repeat(3, 1fr); }
+    header { flex-direction: row; }
+    .stats { text-align: right; }
+    footer { flex-direction: row; }
+    .warn { font-size: 9px; } .star, .time { font-size: 8.5px; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <div>
+      <div class="kicker">영상 요약 설명서 · Solostack · 2026.10.21 · 9분 43초 · 수집 기준 10/21 06:00 KST</div>
+      <h1>개발자가 볼 만한 이번 주 GitHub 트렌딩 Top 10 + 번외 3 (10월 3주)</h1>
+      <p class="lede">이번 주 흐름: 지난주 순위에 없던 <b>REA</b>가 1위(★34.7만), 여러 저장소가 <b>에이전트에게 주던 권한을 줄이는</b> 업데이트를 냈습니다.</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>13개</b><span>저장소 정리</span></div>
+      <div class="stat"><b>+14만★</b><span>REA 일주일 증가</span></div>
+      <div class="stat"><b>5건</b><span>바로 점검할 설정</span></div>
+    </div>
+  </header>
+
+  <section class="grid">
+    <div class="sec"><span>TOP 10 · 각 카드의 복사 버튼 → Claude Code / Codex에 붙여 넣기</span>
+      <button class="btn btn-line" data-copy-links>저장소 링크 13개 복사</button></div>
+
+    <article class="card top">
+      <div class="card-head"><span class="rank">1</span><h2>REA</h2><span class="star">★34.7만</span>
+        <a class="time" href="https://youtu.be/MbpCiTNGXxM?t=498" target="_blank" rel="noopener">▶ 8:18</a></div>
+      <p class="what">코딩 에이전트를 Ghidra·Hopper·IDA에 연결해 소스 없는 프로그램, Electron·안드로이드 앱, 웹사이트까지 분석. 패킷·SQLite·WASM 분석 추가.</p>
+      <p class="warn">⚠ 호환 깨지는 변경 7건 → 버전 고정 · 공식 저장소와 npm <b>rea-agents</b>만 사용(포크 8.7만) · 타사 SW 분석은 약관·저작권 문제</p>
+      <div class="copybox"><code>https://github.com/morluto/rea 를 공식 npm 패키지(rea-agents)로 버전을 고정해 설치하고, 내가 만든 앱 구조를 분석해 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><span class="rank">2</span><h2>ai-job-search</h2><span class="star">★6만</span>
+        <a class="time" href="https://youtu.be/MbpCiTNGXxM?t=315" target="_blank" rel="noopener">▶ 5:15</a></div>
+      <p class="what">Claude Code 구직 도구. 공고 적합도 평가 → 이력서·자소서 초안 → 리뷰어 에이전트 비평 → PDF·채용시스템(ATS) 검사.</p>
+      <p class="warn">⚠ v1.7.3에서 권한 축소(업로드·비밀파일 차단, git push는 매번 확인) · 포크는 항상 공개 → 개인용은 private 저장소</p>
+      <div class="copybox"><code>https://github.com/MadsLorentzen/ai-job-search 를 private 저장소로 복제해 설치하고, 이 채용 공고와 내 이력서 적합도를 평가해 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><span class="rank">3</span><h2>claude-plugins-official</h2>
+        <a class="time" href="https://youtu.be/MbpCiTNGXxM?t=273" target="_blank" rel="noopener">▶ 4:33</a></div>
+      <p class="what">Anthropic이 관리하는 Claude Code 공식 플러그인 목록(315개). 기본 연결돼 있어 이름만으로 설치. security-guidance 커밋 리뷰어가 읽기 전용으로.</p>
+      <p class="warn">⚠ 외부(파트너·커뮤니티) 플러그인 내용은 Anthropic이 검증하지 않음 → 설치 전 확인</p>
+      <div class="copybox"><code>https://github.com/anthropics/claude-plugins-official 목록에서 security-guidance 플러그인을 설치하고 어떤 시점에 검사하는지 알려 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><span class="rank">4</span><h2>context-mode</h2><span class="star">★3.1만</span>
+        <a class="time" href="https://youtu.be/MbpCiTNGXxM?t=235" target="_blank" rel="noopener">▶ 3:55</a></div>
+      <p class="what">로그·브라우저 기록 같은 긴 도구 출력을 따로 처리해 대화 창(컨텍스트)을 아끼고, 작업 기록은 DB에 두었다가 압축 후 다시 꺼내 줌. "315KB→5.4KB(98%)"는 개발사 발표.</p>
+      <p class="warn">⚠ Elastic License 2.0: 사내 사용 OK, 호스팅 서비스로 재제공 불가</p>
+      <div class="copybox"><code>https://github.com/mksglu/context-mode 플러그인을 설치하고, 긴 로그 출력이 컨텍스트를 덜 차지하는지 확인해 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><span class="rank">5</span><h2>Ghidra</h2><span class="star">★9.2만</span>
+        <a class="time" href="https://youtu.be/MbpCiTNGXxM?t=202" target="_blank" rel="noopener">▶ 3:22</a></div>
+      <p class="what">NSA 연구국의 무료 리버스 엔지니어링 도구. 기계어를 읽을 수 있는 코드로 되돌리고, 함수 흐름 그래프·Java/Python 스크립트 자동화, 서버(headless) 모드. REA의 분석 엔진 중 하나.</p>
+      <p class="warn">⚠ 이번 주 서버 인증서 검사 보안 수정 · 다음 12.2는 JDK 25 필요</p>
+      <div class="copybox"><code>https://github.com/NationalSecurityAgency/ghidra 최신 릴리스를 설치하고 headless 모드로 바이너리 하나를 분석하는 방법을 알려 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><span class="rank">6</span><h2>scientific-agent-skills</h2><span class="star">★5.3만</span>
+        <a class="time" href="https://youtu.be/MbpCiTNGXxM?t=166" target="_blank" rel="noopener">▶ 2:46</a></div>
+      <p class="what">생물·화학·의학·물리·데이터 분석용 연구 스킬 177개. DB 조회 스킬 하나에 PubChem·ChEMBL·UniProt 등 80개 조회법, 스킬별 워크플로 도해.</p>
+      <p class="warn">⚠ 스킬이 코드 실행·패키지 설치·네트워크 요청까지 시킴 → 한꺼번에 전부 설치 금지(README 경고)</p>
+      <div class="copybox"><code>https://github.com/K-Dense-AI/scientific-agent-skills 에서 데이터베이스 조회 스킬 하나만 골라 설치해 줘. 전부 설치하지는 마.</code><button class="btn">복사</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><span class="rank">7</span><h2>HyperFrames</h2><span class="star">★6.8만</span>
+        <a class="time" href="https://youtu.be/MbpCiTNGXxM?t=131" target="_blank" rel="noopener">▶ 2:11</a></div>
+      <p class="what">HTML로 장면을 쓰면 영상으로 렌더(같은 입력 = 같은 영상). 이번 주 릴리스 27번: 음량·무음 측정 <code>hyperframes audio</code>, 720p·480p 렌더, 비영어 받아쓰기 버그 수정.</p>
+      <p class="warn">⚠ 사용 기록 수집 기본 ON · v0.8.164부터 사이트 캡처가 HTTPS_PROXY 미사용(프록시 회사망 확인)</p>
+      <div class="copybox"><code>https://github.com/heygen-com/hyperframes 를 설치하고(HYPERFRAMES_NO_TELEMETRY=1), 이 HTML 장면을 720p 영상으로 렌더해 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><span class="rank">8</span><h2>VoiceStudio</h2><span class="star">★7.8만</span>
+        <a class="time" href="https://youtu.be/MbpCiTNGXxM?t=94" target="_blank" rel="noopener">▶ 1:34</a></div>
+      <p class="what">목소리 복제·디자인, 영상 더빙, 받아쓰기, 오디오북을 클라우드 없이 내 PC에서. 휴대폰 QR 원격 앱 미리보기(소스 빌드 필요). 이번 주 별 증가 2위.</p>
+      <p class="warn">⚠ 앱은 AGPL-3.0이나 기본 음성 모델 상업 이용 조건은 별도 · 남의 목소리 복제는 당사자 동의 필수</p>
+      <div class="copybox"><code>https://github.com/debpalash/VoiceStudio 를 내 컴퓨터에 설치하고, 내 목소리로 받아쓰기와 더빙하는 순서를 알려 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><span class="rank">9</span><h2>ruflo</h2><span class="star">★7.7만</span>
+        <a class="time" href="https://youtu.be/MbpCiTNGXxM?t=54" target="_blank" rel="noopener">▶ 0:54</a></div>
+      <p class="what">옛 claude-flow. Claude Code·Codex 위에서 전문 에이전트 100여 개를 묶어 동시 실행, 메모리 저장소·터미널 콘솔 포함. v3.57.0은 보안 기본값 정리 중심, 벡터 검색 실제 연결.</p>
+      <p class="warn">⚠ Codex 기본 권한 danger-full-access → workspace-write·on-request로 낮춤 · 경로 우회(CWE-22) 수정</p>
+      <div class="copybox"><code>https://github.com/ruvnet/ruflo 최신 버전으로 설치하고, .codex/config.toml에 danger-full-access가 남아 있는지 확인해 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><span class="rank">10</span><h2>android/skills</h2><span class="star">★9천</span>
+        <a class="time" href="https://youtu.be/MbpCiTNGXxM?t=20" target="_blank" rel="noopener">▶ 0:20</a></div>
+      <p class="what">Google Android 팀 공식 에이전트 스킬 30개. 빌드 도구 업그레이드, 옛 화면 → Compose 이전, Play 정책 점검. 새 스킬 4개(LiteRT 온디바이스 AI·Compose 성능 등).</p>
+      <p class="warn">⚠ Android CLI 사용 통계는 명령마다 <code>--no-metrics</code></p>
+      <div class="copybox"><code>https://github.com/android/skills 를 Claude Code 플러그인으로 설치하고, 내 프로젝트 화면 하나를 Compose로 옮겨 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <div class="sec"><span>번외 · 순위 밖 주목 저장소</span></div>
+
+    <article class="card">
+      <div class="card-head"><span class="rank">+1</span><h2>OpenCode</h2><span class="star">★21.8만</span>
+        <a class="time" href="https://youtu.be/MbpCiTNGXxM?t=361" target="_blank" rel="noopener">▶ 6:01</a></div>
+      <p class="what">모델 회사에 묶이지 않는 오픈소스 코딩 에이전트. 도구·반복은 내 PC, 모델 API로는 추론만 → 75곳 이상의 모델이나 로컬 모델 선택. 2.0: 서버 하나에 터미널·웹·데스크톱 연결, 코드 모드 기본.</p>
+      <p class="warn">⚠ 기본 설정은 도구 승인 없음 · 10/17 Console 보안 사고 → 저장한 외부 API 키 교체, 격리 환경 권장</p>
+      <div class="copybox"><code>https://github.com/anomalyco/opencode 를 설치하고, 도구 실행 전에 매번 승인을 묻도록 권한 설정을 바꿔 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><span class="rank">+2</span><h2>vLLM</h2><span class="star">★9.4만</span>
+        <a class="time" href="https://youtu.be/MbpCiTNGXxM?t=432" target="_blank" rel="noopener">▶ 7:12</a></div>
+      <p class="what">공개 언어 모델을 내 서버에서 OpenAI 호환 API로 띄우는 엔진. Ollama와 비슷하지만 연속 배칭으로 처리량이 높아 실서비스용.</p>
+      <p class="warn">⚠ v0.32.0: 기본 CORS 해제 → 브라우저 호출 시 <code>--allowed-origins</code> 지정 · Python 3.11 이상 · 사용 통계 기본 수집</p>
+      <div class="copybox"><code>https://github.com/vllm-project/vllm 0.32를 설치하고(Python 3.11+, VLLM_NO_USAGE_STATS=1), 허용 주소를 지정해 OpenAI 호환 서버를 띄워 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><span class="rank">+3</span><h2>cursor/plugins</h2><span class="star">★1.3만</span>
+        <a class="time" href="https://youtu.be/MbpCiTNGXxM?t=470" target="_blank" rel="noopener">▶ 7:50</a></div>
+      <p class="what">Cursor 편집기의 플러그인 규격·공식 모음(주간 12위). 일주일 새 101 → 112개, 신규는 광고·CRM·급여 같은 업무 SaaS 연동. 개발 절차 플러그인 pstack은 Claude Code에서도 설치.</p>
+      <p class="warn">⚠ 새 연동 다수가 쓰기 권한 → 연결 시 승인 범위를 좁게</p>
+      <div class="copybox"><code>https://github.com/cursor/plugins 의 pstack 플러그인을 Claude Code에 설치하고 사용법을 알려 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <div class="check">
+      <h3><span>✓ 이번 주 확인할 것 <a class="time" style="margin-left:6px" href="https://youtu.be/MbpCiTNGXxM?t=562" target="_blank" rel="noopener">▶ 9:22</a></span>
+        <button class="btn btn-line" data-copy-check>점검 목록 전체 복사</button></h3>
+      <div class="row"><span><b>OpenCode</b> Console에 외부 API 키를 저장했다면 교체</span>
+        <div class="copybox"><code>OpenCode Console에 저장한 외부 API 키 전부 교체</code><button class="btn">복사</button></div></div>
+      <div class="row"><span><b>vLLM</b> 올리기 전 허용 주소 · Python 3.11+ · 통계 끄기</span>
+        <div class="copybox"><code>export VLLM_NO_USAGE_STATS=1   # 또는 DO_NOT_TRACK=1</code><button class="btn">복사</button></div></div>
+      <div class="row"><span><b>ruflo</b> 3.57.0 이전에 init 했다면 전체 권한 남았는지</span>
+        <div class="copybox"><code>grep -n "danger-full-access" .codex/config.toml</code><button class="btn">복사</button></div></div>
+      <div class="row"><span><b>HyperFrames</b> 사용 기록 수집 끄기</span>
+        <div class="copybox"><code>export HYPERFRAMES_NO_TELEMETRY=1</code><button class="btn">복사</button></div></div>
+      <div class="row"><span><b>security-guidance</b> LLM 리뷰 끄기(필요할 때만)</span>
+        <div class="copybox"><code>export ENABLE_CODE_SECURITY_REVIEW=0</code><button class="btn">복사</button></div></div>
+      <div class="row"><span><b>Android CLI</b> 사용 통계 보내지 않기</span>
+        <div class="copybox"><code>명령마다 --no-metrics 옵션 추가</code><button class="btn">복사</button></div></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>출처: <a href="https://youtu.be/MbpCiTNGXxM" target="_blank" rel="noopener">「이번 주 개발자라면 봐야 할 오픈소스 Top 10 +@ 총정리」</a> — Solostack (영상 자막·설명란 기준)</span>
+    <span>별 수는 2026.10.21 수집 값 · 복사 문장은 예시이니 상황에 맞게 고쳐 쓰세요.</span>
+  </footer>
+</main>
+
+<script>
+  function copyText(text, btn) {
+    const done = () => {
+      const label = btn.textContent;
+      btn.textContent = '복사됨 ✓';
+      btn.classList.add('done');
+      setTimeout(() => { btn.textContent = label; btn.classList.remove('done'); }, 1500);
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(done, () => fallback(text) && done());
+    } else if (fallback(text)) {
+      done();
+    }
+  }
+  function fallback(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) {}
+    ta.remove();
+    return ok;
+  }
+  const repoUrl = card => card.querySelector('.copybox code').textContent.match(/https:\/\/github\.com\/[\w.-]+\/[\w.-]+/)[0];
+  document.querySelectorAll('.card').forEach(card => {
+    const p = document.createElement('p');
+    p.className = 'repo';
+    p.textContent = repoUrl(card).replace('https://', '');
+    card.appendChild(p);
+  });
+  document.querySelectorAll('.copybox .btn').forEach(btn => {
+    btn.addEventListener('click', () => copyText(btn.previousElementSibling.textContent, btn));
+  });
+  document.querySelector('[data-copy-links]').addEventListener('click', e => {
+    const links = [...document.querySelectorAll('.card')].map(card => {
+      const name = card.querySelector('h2').textContent;
+      return card.querySelector('.rank').textContent + '. ' + name + ' — ' + repoUrl(card);
+    });
+    copyText(links.join('\n'), e.currentTarget);
+  });
+  document.querySelector('[data-copy-check]').addEventListener('click', e => {
+    const rows = [...document.querySelectorAll('.check .row')].map(r =>
+      '- ' + r.querySelector('span').textContent + '\n  ' + r.querySelector('code').textContent);
+    copyText('이번 주 확인할 것\n' + rows.join('\n'), e.currentTarget);
+  });
+</script>
+</body>
+</html>
