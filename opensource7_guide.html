@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>오픈소스 7선 설명서</title>
+<style>
+  :root {
+    --bg: #f6f5f1; --paper: #ffffff; --ink: #1d1d1b; --muted: #6b6a65;
+    --line: #e4e2db; --accent: #2f5d50; --accent-soft: #e6efeb;
+    --code-bg: #f3f2ed; --ok: #2f7d4f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #151514; --paper: #1e1e1c; --ink: #ecebe6; --muted: #a09e97;
+      --line: #33322f; --accent: #8cc4ae; --accent-soft: #24302b;
+      --code-bg: #262624; --ok: #7fd1a0;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #151514; --paper: #1e1e1c; --ink: #ecebe6; --muted: #a09e97;
+    --line: #33322f; --accent: #8cc4ae; --accent-soft: #24302b;
+    --code-bg: #262624; --ok: #7fd1a0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 14px/1.55 "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  }
+  .page {
+    max-width: 960px; margin: 24px auto; padding: 28px 32px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 10px;
+  }
+  header { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start;
+    border-bottom: 2px solid var(--ink); padding-bottom: 12px; margin-bottom: 14px; }
+  .kicker { font-size: 12px; color: var(--muted); letter-spacing: .04em; }
+  h1 { margin: 2px 0 4px; font-size: 22px; line-height: 1.3; }
+  .lede { margin: 0; color: var(--muted); }
+  .stats { display: flex; gap: 18px; flex-shrink: 0; text-align: right; }
+  .stat b { display: block; font-size: 20px; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .stat span { font-size: 11px; color: var(--muted); }
+
+  .how { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center;
+    background: var(--accent-soft); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; }
+  .how .step { font-weight: 700; color: var(--accent); white-space: nowrap; }
+  .how ol { margin: 0; padding-left: 18px; }
+  .how li { margin: 1px 0; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .card { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; }
+  .card-head { display: flex; align-items: baseline; gap: 8px; }
+  .num { font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .card h2 { font-size: 15px; margin: 0; }
+  .time { margin-left: auto; font-size: 11px; color: var(--muted); text-decoration: none; white-space: nowrap; }
+  .time:hover { color: var(--accent); }
+  .what { margin: 4px 0 6px; }
+  .meta { font-size: 12px; color: var(--muted); margin: 0 0 6px; }
+  .meta a { color: inherit; }
+  .copybox { margin-top: auto; display: flex; align-items: stretch; background: var(--code-bg);
+    border-radius: 6px; overflow: hidden; }
+  .copybox code { flex: 1; padding: 6px 8px; font: 12px/1.45 ui-monospace, "SF Mono", Consolas, monospace;
+    white-space: pre-wrap; word-break: break-all; }
+  .btn { border: 0; border-left: 1px solid var(--line); background: transparent; color: var(--accent);
+    font: 600 12px/1 inherit; padding: 0 12px; cursor: pointer; white-space: nowrap; min-width: 56px; }
+  .btn:hover { background: var(--accent-soft); }
+  .btn.done { color: var(--ok); }
+  .btn-all { border: 1px solid var(--accent); border-radius: 6px; padding: 8px 12px; min-width: auto; }
+
+  footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--muted); }
+  footer a { color: inherit; }
+
+  @media (max-width: 720px) {
+    .page { margin: 0; padding: 18px 16px; border-radius: 0; border: 0; }
+    header { flex-direction: column; }
+    .stats { text-align: left; }
+    .how { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; }
+  }
+  @media print {
+    @page { size: A4; margin: 10mm; }
+    body { background: #fff; font-size: 11px; }
+    .page { margin: 0; padding: 0; border: 0; max-width: none; }
+    .btn, .btn-all { display: none; }
+    .card { break-inside: avoid; padding: 7px 9px; }
+    .grid { gap: 6px; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <div>
+      <div class="kicker">영상 요약 설명서 · 문외인 Layperson · 2026.10.21 · 8분 51초</div>
+      <h1>깃허브 오픈소스 100개 넘게 써 보고 남긴 무료 도구 7개</h1>
+      <p class="lede">매주 쏟아지는 오픈소스 중, 깔고 며칠 만에 지우지 않고 실제 업무에 계속 쓰게 된 것만 추렸습니다.</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>100+ → 7</b><span>직접 설치 후 선별</span></div>
+      <div class="stat"><b>87.8만+</b><span>7개 합산 GitHub ★</span></div>
+      <div class="stat"><b>전부 무료</b><span>오픈소스</span></div>
+    </div>
+  </header>
+
+  <section class="how">
+    <div class="step">설치 방법</div>
+    <ol>
+      <li><b>Claude Code</b> 또는 <b>Codex</b>를 엽니다.</li>
+      <li>아래 카드의 <b>복사</b> 버튼으로 설치 문장을 복사해 붙여 넣습니다. (저장소 주소만 줘도 AI가 설치부터 사용법까지 처리)</li>
+    </ol>
+    <button class="btn btn-all" data-copy-all>7개 한 번에 복사</button>
+  </section>
+
+  <section class="grid">
+    <article class="card">
+      <div class="card-head"><span class="num">01</span><h2>셰이더스 Shaders</h2>
+        <a class="time" href="https://youtu.be/kvJ_j4EyrIs?t=41" target="_blank" rel="noopener">▶ 0:41</a></div>
+      <p class="what">웹사이트 첫 화면에 <b>움직이는 빛 배경</b>을 입힙니다. 무료 배경 효과 200종 이상.</p>
+      <p class="meta">월 115만 다운로드 · <a href="https://shaders.com" target="_blank" rel="noopener">shaders.com</a></p>
+      <div class="copybox"><code>https://github.com/shader-effects-inc/shaders 설치해 주고, 내 웹페이지 첫 화면에 움직이는 빛 배경을 적용해 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><span class="num">02</span><h2>라야 Laya</h2>
+        <a class="time" href="https://youtu.be/kvJ_j4EyrIs?t=106" target="_blank" rel="noopener">▶ 1:46</a></div>
+      <p class="what">밀린 <b>댓글·문의·메일을 자동 분류</b>하는 텍스트 분류 AI. 내 컴퓨터에서 무료로 돌아갑니다.</p>
+      <p class="meta">★ 3.3만 · 100개+ 언어 · 판단 0.033초 · <a href="https://huggingface.co/spaces/convaiinnovations/laya-demo" target="_blank" rel="noopener">데모</a></p>
+      <div class="copybox"><code>https://github.com/NandhaKishorM/laya 설치해 주고, 내 댓글·문의 글 목록을 문의/불만/칭찬/스팸으로 분류하는 방법을 알려 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><span class="num">03</span><h2>다이어그램 디자인</h2>
+        <a class="time" href="https://youtu.be/kvJ_j4EyrIs?t=157" target="_blank" rel="noopener">▶ 2:37</a></div>
+      <p class="what"><b>한 문장 설명 → 도식·흐름도</b>. 회사 사이트 주소를 주면 폰트와 색 조합까지 맞춥니다.</p>
+      <p class="meta">★ 5.8만 · 도식 40종+ · <a href="https://diagramdesign.dev" target="_blank" rel="noopener">diagramdesign.dev</a></p>
+      <div class="copybox"><code>https://github.com/cathrynlavery/diagram-design 스킬을 설치해 주고, 우리 사이트 폰트와 색에 맞춰 업무 흐름도를 그려 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><span class="num">04</span><h2>하이퍼프레임즈 HyperFrames</h2>
+        <a class="time" href="https://youtu.be/kvJ_j4EyrIs?t=223" target="_blank" rel="noopener">▶ 3:43</a></div>
+      <p class="what"><b>HTML 화면을 그대로 MP4 소개 영상</b>으로 뽑습니다. 주소만 주면 소개 영상 완성.</p>
+      <p class="meta">★ 6.8만 · 월 271만 다운로드 · <a href="https://hyperframes.dev" target="_blank" rel="noopener">hyperframes.dev</a></p>
+      <div class="copybox"><code>https://github.com/heygen-com/hyperframes 설치해 주고, 내 웹페이지로 30초짜리 MP4 소개 영상을 만들어 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><span class="num">05</span><h2>보이스 스튜디오 VoiceStudio</h2>
+        <a class="time" href="https://youtu.be/kvJ_j4EyrIs?t=277" target="_blank" rel="noopener">▶ 4:37</a></div>
+      <p class="what"><b>내 목소리 복제·받아쓰기·더빙</b>을 무료로. Mac(애플 실리콘)·Windows·Linux 지원.</p>
+      <p class="meta">★ 7.8만 · 646개 언어 더빙 · <a href="https://voicestudio.sh" target="_blank" rel="noopener">voicestudio.sh</a></p>
+      <div class="copybox"><code>https://github.com/debpalash/VoiceStudio 내 컴퓨터에 설치해 주고, 내 목소리를 복제해서 영어로 더빙하는 순서를 알려 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><span class="num">06</span><h2>맷 포콕 스킬 Matt Pocock Skills</h2>
+        <a class="time" href="https://youtu.be/kvJ_j4EyrIs?t=331" target="_blank" rel="noopener">▶ 5:31</a></div>
+      <p class="what">AI가 <b>질문을 던져 계획의 빈틈</b>을 찾아 주는 스킬 모음. 바로 만들기 전에 놓친 부분부터 짚습니다.</p>
+      <p class="meta">Claude Code 스킬 · <a href="https://www.aihero.dev/skills" target="_blank" rel="noopener">스킬 가이드</a></p>
+      <div class="copybox"><code>https://github.com/mattpocock/skills 스킬을 설치해 주고, 내 기획안에서 빠진 부분을 질문으로 하나씩 찾아 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><span class="num">07</span><h2>REA</h2>
+        <a class="time" href="https://youtu.be/kvJ_j4EyrIs?t=404" target="_blank" rel="noopener">▶ 6:44</a></div>
+      <p class="what">기존 <b>앱 구조를 풀어(역분석)</b> 내게 맞는 맞춤 버전을 만듭니다.</p>
+      <p class="meta">리버스 엔지니어링 · <a href="https://rea.tools" target="_blank" rel="noopener">rea.tools</a> · 활용편: <a href="https://youtu.be/tDK12yXp_L8" target="_blank" rel="noopener">이전 영상</a></p>
+      <div class="copybox"><code>https://github.com/morluto/rea 설치해 주고, 내가 쓰는 앱의 구조를 분석해서 필요한 기능만 담은 맞춤 버전을 만들어 줘.</code><button class="btn">복사</button></div>
+    </article>
+
+    <article class="card" style="background:var(--accent-soft);border-color:transparent">
+      <div class="card-head"><span class="num">TIP</span><h2>이렇게 고르세요</h2>
+        <a class="time" href="https://youtu.be/kvJ_j4EyrIs?t=461" target="_blank" rel="noopener">▶ 7:41</a></div>
+      <p class="what" style="margin-bottom:0">
+        · 웹페이지 꾸미기 → <b>01 · 03 · 04</b><br>
+        · 댓글·문의 정리 → <b>02</b> &nbsp;· 영상 더빙 → <b>05</b><br>
+        · 기획 점검 → <b>06</b> &nbsp;· 앱 맞춤 제작 → <b>07</b><br>
+        <span style="color:var(--muted);font-size:12px">설치 문장은 예시입니다. 뒷부분을 내 작업에 맞게 바꿔 쓰세요.</span>
+      </p>
+    </article>
+  </section>
+
+  <footer>
+    <span>출처: <a href="https://youtu.be/kvJ_j4EyrIs" target="_blank" rel="noopener">「깃허브 100개 중 끝까지 남은 미친 오픈소스 7개」</a> — 문외인 Layperson</span>
+    <span>수치는 영상 설명란 기준(2026.10.21)이며 바뀔 수 있습니다.</span>
+  </footer>
+</main>
+
+<script>
+  function copyText(text, btn) {
+    const done = () => {
+      const label = btn.textContent;
+      btn.textContent = '복사됨 ✓';
+      btn.classList.add('done');
+      setTimeout(() => { btn.textContent = label; btn.classList.remove('done'); }, 1500);
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(done, () => fallback(text) && done());
+    } else if (fallback(text)) {
+      done();
+    }
+  }
+  function fallback(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) {}
+    ta.remove();
+    return ok;
+  }
+  document.querySelectorAll('.copybox .btn').forEach(btn => {
+    btn.addEventListener('click', () => copyText(btn.previousElementSibling.textContent, btn));
+  });
+  document.querySelector('[data-copy-all]').addEventListener('click', e => {
+    const all = [...document.querySelectorAll('.copybox code')]
+      .map((c, i) => (i + 1) + '. ' + c.textContent).join('\n');
+    copyText('아래 오픈소스를 순서대로 설치해 줘.\n' + all, e.currentTarget);
+  });
+</script>
+</body>
+</html>
